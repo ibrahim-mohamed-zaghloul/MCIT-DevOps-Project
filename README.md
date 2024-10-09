@@ -14,6 +14,10 @@
 - **xUnit**: For unit testing the server-side logic.
 - **Jasmine & Karma**: For unit testing the Angular application.
 
+## User Interface Preview
+
+![User Interface](ClientSide/public/UI.png)
+
 ## Installation Instructions
 
 ### Clone the Repository
@@ -21,7 +25,7 @@
 To get started, clone the repository to your local machine using the following command:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Michael-Haleem/DockerizedCRUD3TierWebApp.git
 ```
 
 ### Run the Project with Docker Compose
