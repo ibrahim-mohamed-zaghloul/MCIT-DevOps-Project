@@ -7,7 +7,7 @@ public static class DbInitializer
 {
     public static void Seed(AppContext context)
     {
-        int maxRetries = 5;
+        int maxRetries = 15;
         int delay = 2000;
 
         for (int i = 0; i < maxRetries; i++)

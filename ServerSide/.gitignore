@@ -55,3 +55,6 @@ coverage/
 
 # Ignore backups
 *.bak
+
+# appsettings
+ServerSide/Api/appsettings.Development.json
