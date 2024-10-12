@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: backend
   namespace: dev
+  labels:
+    app: backend
 spec:
   replicas: 1
   selector:
@@ -19,7 +21,46 @@ spec:
         ports:
         - containerPort: 8080
         env:
-            - name: ConnectionStrings__DefaultConnection
-              value: "Server=sqlserver;Database=AppDb;User Id=sa;Password=MasterKey0;TrustServerCertificate=True; "
-            - name: AllowedOrigins
-              value: "http://localhost"
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: global-secrets
+                key: db-connection-string
+          - name: AllowedOrigins
+            valueFrom:
+              configMapKeyRef:
+                name: global-config
+                key: AllowedOrigins
+          - name: API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: global-config
+                key: API_URL
+          - name: VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: global-config
+                key: VERSION
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+      initContainers:
+      - name: wait-for-sqlserver
+        image: busybox
+        command: ['sh', '-c', 'until nc -z svc-sqlserver 1433; do echo waiting for sqlserver; sleep 2; done;']

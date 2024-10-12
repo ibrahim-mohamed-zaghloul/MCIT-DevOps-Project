@@ -18,22 +18,28 @@ spec:
           image: mcr.microsoft.com/mssql/server:2022-latest
           env:
             - name: ACCEPT_EULA
-              value: "Y"
+              valueFrom:
+                configMapKeyRef:
+                  name: global-config
+                  key: ACCEPT_EULA
             - name: MSSQL_SA_PASSWORD
-              value: "MasterKey0"
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: mssql-sa-password
           ports:
             - containerPort: 1433  
           volumeMounts:
             - mountPath: /var/opt/mssql
-              name: sqlserver-data  # Reference the PVC here
+              name: sqlserver-data
           resources:
             requests:
-              memory: "2Gi"  # SQL Server requires at least 2GB of memory
-              cpu: "1"        # SQL Server requires 1 CPU
+              memory: "2Gi"
+              cpu: "1"
             limits:
-              memory: "3Gi"  # Set an upper limit of 4GB to prevent excessive usage
-              cpu: "2"       # Limit to 2 CPUs to avoid overuse
-      volumes:  # Volumes should be outside of the containers array
+              memory: "3Gi"
+              cpu: "2"
+      volumes:
         - name: sqlserver-data
           persistentVolumeClaim:
-            claimName: sqlserver-data-pvc  # Reference the PVC by name
+            claimName: sqlserver-data-pvc
