@@ -20,7 +20,7 @@ spec:
         - containerPort: 80
         env:
         - name: API_URL
-          value: "http://svc-backend:8080/api"
+          value: "http://192.168.49.2:30001/api"
 ---
 apiVersion: v1
 kind: Service

@@ -22,7 +22,7 @@ spec:
         - name: ConnectionStrings__DefaultConnection
           value: "Server=svc-sqlserver;Database=AppDb;User Id=sa;Password=MasterKey0;TrustServerCertificate=True;"
         - name: AllowedOrigins
-          value: "http://localhost" # we need modify this to fit with the minikube cluster value
+          value: "http://192.168.49.2:30000" # we need modify this to fit with the minikube cluster value
         # readinessProbe:
         #   httpGet:
         #     path: /health
@@ -44,6 +44,7 @@ metadata:
 spec:
   ports:
     - port: 8080
+      nodePort: 30001
   selector:
     app: api
-  type: ClusterIP
+  type: NodePort
