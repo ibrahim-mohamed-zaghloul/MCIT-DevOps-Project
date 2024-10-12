@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: frontend
+  namespace: dev
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend 
+  template:
+    metadata:
+      labels:
+        app: frontend 
+    spec:
+      containers:
+      - name: frontend
+        image: ahmedalmahdi/clientside:v2 # if u need to automating versioning image u can use helm templete
+        ports: 
+        - containerPort: 80
+        env:
+            - name: API_URL
+              value: "http://localhost:8080/api"
+
+        # envFrom:
+        #   - configMapRef:
+        #       name: app-config
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10

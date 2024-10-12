@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: backend
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend 
+        image: ahmedalmahdi/serverside:v2
+        ports:
+        - containerPort: 8080
+        env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=sqlserver;Database=AppDb;User Id=sa;Password=MasterKey0;TrustServerCertificate=True; "
+            - name: AllowedOrigins
+              value: "http://localhost"

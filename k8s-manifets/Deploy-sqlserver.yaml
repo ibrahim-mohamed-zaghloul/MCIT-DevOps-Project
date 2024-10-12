@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlserver
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sqlserver
+  template:
+    metadata:
+      labels:
+        app: sqlserver
+    spec:
+      containers:
+        - name: sqlserver
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_SA_PASSWORD
+              value: "MasterKey0"
+          ports:
+            - containerPort: 1433  
+          volumeMounts:
+            - mountPath: /var/opt/mssql
+              name: sqlserver-data  # Reference the PVC here
+          resources:
+            requests:
+              memory: "2Gi"  # SQL Server requires at least 2GB of memory
+              cpu: "1"        # SQL Server requires 1 CPU
+            limits:
+              memory: "4Gi"  # Set an upper limit of 4GB to prevent excessive usage
+              cpu: "2"       # Limit to 2 CPUs to avoid overuse
+      volumes:  # Volumes should be outside of the containers array
+        - name: sqlserver-data
+          persistentVolumeClaim:
+            claimName: sqlserver-data-pvc  # Reference the PVC by name

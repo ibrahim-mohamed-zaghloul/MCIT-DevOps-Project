@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-frontend
+  namespace: dev
+spec:
+  type: NodePort  # Expose externally through a NodePort for local testing
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30001  # Assigning a nodePort for external access
