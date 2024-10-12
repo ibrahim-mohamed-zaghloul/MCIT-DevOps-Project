@@ -7,14 +7,3 @@ data:
   # API_URL: Now set directly in deployments or Ingress
   VERSION: "v1"  # You can keep version here if needed
   # AllowedOrigins: Now set directly in the backend deployment
-
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: global-config
-#   namespace: dev
-# data:
-#   API_URL: "http://svc-backend:8080/api"
-#   VERSION: "v1"
-#   AllowedOrigins: "http://svc-frontend:80/"
-#   ACCEPT_EULA: "Y"

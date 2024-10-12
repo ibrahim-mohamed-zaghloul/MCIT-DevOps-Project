@@ -39,15 +39,15 @@ spec:
           limits:
             cpu: "750m"
             memory: "1Gi"
-        # readinessProbe:  # Add readiness and liveness probes
-        #   httpGet:
-        #     path: /health  # Replace with your backend health check endpoint
-        #     port: 8080
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 5
-        # livenessProbe:
-        #   httpGet:
-        #     path: /health # Replace with your backend health check endpoint
-        #     port: 8080
-        #   initialDelaySeconds: 15
-        #   periodSeconds: 10
+        readinessProbe:  # Add readiness and liveness probes
+          httpGet:
+            path: /health  # Replace with your backend health check endpoint
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health # Replace with your backend health check endpoint
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10

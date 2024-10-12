@@ -40,7 +40,7 @@ spec:
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 10
-      # initContainers:  # Make sure backend is ready
-      # - name: wait-for-backend
-      #   image: busybox:1.35 # Use a specific version
-      #   command: ['sh', '-c', 'until wget -qO- http://svc-backend:8080/health; do echo waiting for backend; sleep 2; done;'] # Use wget with health check
+      initContainers:  # Make sure backend is ready
+      - name: wait-for-backend
+        image: busybox:1.35 # Use a specific version
+        command: ['sh', '-c', 'until wget -qO- http://svc-backend:8080/health; do echo waiting for backend; sleep 2; done;'] # Use wget with health check
