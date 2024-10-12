@@ -5,23 +5,22 @@ metadata:
   namespace: dev
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
-    - host: "app.local"
-      http:
-        paths:
-        - path: /frontend(/|$)(.*)
-          pathType: Prefix
-          backend:
-            service:
-              name: svc-frontend
-              port:
-                number: 80
-        - path: /backend(/|$)(.*)
-          pathType: Prefix
-          backend:
-            service:
-              name: svc-backend
-              port:
-                number: 8080
+  - host: "app.local"  # Replace with your domain/IP
+    http:
+      paths:
+      - path: /frontend
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-frontend
+            port:
+              number: 80
+      - path: /backend #  /backend path for backend service
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-backend
+            port:
+              number: 8080

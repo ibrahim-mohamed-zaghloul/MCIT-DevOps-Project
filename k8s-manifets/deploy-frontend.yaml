@@ -1,29 +1,26 @@
 apiVersion: apps/v1
-kind: Deployment 
+kind: Deployment
 metadata:
   name: frontend
   namespace: dev
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend 
+      app: frontend
   template:
     metadata:
       labels:
-        app: frontend 
+        app: frontend
     spec:
       containers:
       - name: frontend
         image: ahmedalmahdi/clientside:v2
-        ports: 
+        ports:
         - containerPort: 80
         env:
-            - name: API_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: API_URL
+          - name: API_URL
+            value: "http://app.local/backend/api" # Use Ingress URL
         resources:
           limits:
             memory: "1024Mi"
@@ -43,7 +40,7 @@ spec:
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 10
-      initContainers:
-      - name: wait-for-backend
-        image: busybox
-        command: ['sh', '-c', 'until nc -z svc-backend 8080; do echo waiting for backend; sleep 2; done;']
+      # initContainers:  # Make sure backend is ready
+      # - name: wait-for-backend
+      #   image: busybox:1.35 # Use a specific version
+      #   command: ['sh', '-c', 'until wget -qO- http://svc-backend:8080/health; do echo waiting for backend; sleep 2; done;'] # Use wget with health check

@@ -4,10 +4,8 @@ metadata:
   name: svc-backend
   namespace: dev
 spec:
-  type: NodePort
-  selector:
-    app: backend
+  selector:  # Removed type: NodePort 
+    app: backend # ONLY use the Ingress for external access
   ports:
-    - port: 8080
-      targetPort: 8080
-      nodePort: 30002  # Assign a NodePort for external access
+  - port: 8080  # Internal port
+    targetPort: 8080

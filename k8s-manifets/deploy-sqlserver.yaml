@@ -18,17 +18,14 @@ spec:
           image: mcr.microsoft.com/mssql/server:2022-latest
           env:
             - name: ACCEPT_EULA
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: ACCEPT_EULA
+              value: "Y"
             - name: MSSQL_SA_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: global-secrets
                   key: mssql-sa-password
           ports:
-            - containerPort: 1433  
+            - containerPort: 1433
           volumeMounts:
             - mountPath: /var/opt/mssql
               name: sqlserver-data

@@ -4,11 +4,8 @@ metadata:
   name: svc-frontend
   namespace: dev
 spec:
-  type: NodePort
   selector:
     app: frontend
-    # version: v2  # Uncomment and use this if you want to select specific versions
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30001
