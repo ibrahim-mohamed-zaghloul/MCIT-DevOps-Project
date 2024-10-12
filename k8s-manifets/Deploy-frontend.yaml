@@ -21,17 +21,13 @@ spec:
         env:
             - name: API_URL
               value: "http://localhost:8080/api"
-
-        # envFrom:
-        #   - configMapRef:
-        #       name: app-config
         resources:
           limits:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "1024Mi"
+            cpu: "750m"
           requests:
-            memory: "256Mi"
-            cpu: "250m"
+            memory: "512Mi"
+            cpu: "512m"
         livenessProbe:
           httpGet:
             path: /
