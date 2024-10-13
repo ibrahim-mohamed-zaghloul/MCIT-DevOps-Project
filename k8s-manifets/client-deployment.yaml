@@ -20,19 +20,7 @@ spec:
         - containerPort: 80
         env:
         - name: API_URL
-          value: "http://192.168.49.2:30001/api"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-frontend
-  namespace: test
-spec:
-  type: NodePort
-  ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30000  # You can set any port between 30000-32767, or omit to let Kubernetes choose
-  selector:
-    app: client
-
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: API_URL

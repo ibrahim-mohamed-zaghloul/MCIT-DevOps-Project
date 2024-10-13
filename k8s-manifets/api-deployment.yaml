@@ -20,31 +20,34 @@ spec:
         - containerPort: 8080
         env:
         - name: ConnectionStrings__DefaultConnection
-          value: "Server=svc-sqlserver;Database=AppDb;User Id=sa;Password=MasterKey0;TrustServerCertificate=True;"
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: ConnectionStrings__DefaultConnection
         - name: AllowedOrigins
-          value: "http://192.168.49.2:30000" # we need modify this to fit with the minikube cluster value
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: AllowedOrigins
+
         # readinessProbe:
         #   httpGet:
         #     path: /health
         #     port: 8080
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 5
+        #   initialDelaySeconds: 20    # Increased to give the backend more time to start
+        #   periodSeconds: 10          # Check every 10 seconds
+        #   timeoutSeconds: 5          # Max time to wait for a response
+        #   failureThreshold: 3        # Retry 3 times before marking as failed
+        #   successThreshold: 1        # Mark as ready after one successful probe
+
         # livenessProbe:
         #   httpGet:
         #     path: /health
         #     port: 8080
-        #   initialDelaySeconds: 15
-        #   periodSeconds: 10
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-backend
-  namespace: test
-spec:
-  ports:
-    - port: 8080
-      nodePort: 30001
-  selector:
-    app: api
-  type: NodePort
+        #   initialDelaySeconds: 30    # Wait longer before starting liveness checks
+        #   periodSeconds: 15          # Check every 15 seconds
+        #   timeoutSeconds: 5          # Max time to wait for a response
+        #   failureThreshold: 3        # Retry 3 times before restarting
+
+
+

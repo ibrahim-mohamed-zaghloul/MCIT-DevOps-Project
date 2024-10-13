@@ -33,15 +33,3 @@ spec:
       - name: sqlserver-data
         persistentVolumeClaim:
           claimName: sqlserver-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc-sqlserver
-  namespace: test
-spec:
-  ports:
-    - port: 1433
-  selector:
-    app: sqlserver
-  type: ClusterIP
