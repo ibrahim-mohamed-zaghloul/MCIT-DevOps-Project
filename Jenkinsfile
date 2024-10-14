@@ -61,6 +61,7 @@ pipeline {
                             set -e
                             # Install Node.js directly to avoid NVM issues
                             curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+                            sudo apt-get update
                             sudo apt-get install -y nodejs
                             node --version
                             npm --version
