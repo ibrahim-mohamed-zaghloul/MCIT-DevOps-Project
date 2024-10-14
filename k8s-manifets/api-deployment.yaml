@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: serverside
+        image: ahmedalmahdi/serverside:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: ConnectionStrings__DefaultConnection
+        - name: AllowedOrigins
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: AllowedOrigins
+
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8080
+        #   initialDelaySeconds: 20    # Increased to give the backend more time to start
+        #   periodSeconds: 10          # Check every 10 seconds
+        #   timeoutSeconds: 5          # Max time to wait for a response
+        #   failureThreshold: 3        # Retry 3 times before marking as failed
+        #   successThreshold: 1        # Mark as ready after one successful probe
+
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8080
+        #   initialDelaySeconds: 30    # Wait longer before starting liveness checks
+        #   periodSeconds: 15          # Check every 15 seconds
+        #   timeoutSeconds: 5          # Max time to wait for a response
+        #   failureThreshold: 3        # Retry 3 times before restarting
+
+
+
