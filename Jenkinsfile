@@ -8,7 +8,7 @@ pipeline {
         DOCKERHUB_PASSWORD = "1234qweasd"
         DOCKER_IMAGE_FRONT = "ahmedalmahdi/clientside"
         DOCKER_IMAGE_BACK = "ahmedalmahdi/serverside"
-        
+
         // Hardcoded GitHub token
         GITHUB_REPO = "https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git"
     }
@@ -45,36 +45,33 @@ pipeline {
         }
 
         stage('Setup Build Environment') {
-                when { environment name: 'BUILD_NEEDED', value: 'true' }
-                parallel {
-                    stage('Setup .NET SDK') {
-                        steps {
-                            sh '''
-                                sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
-                                sudo yum install -y dotnet-sdk-8.0
-                                dotnet --version
-                            '''
-                        }
+            when { environment name: 'BUILD_NEEDED', value: 'true' }
+            parallel {
+                stage('Setup .NET SDK') {
+                    steps {
+                        sh '''
+                            wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+                            sudo dpkg -i packages-microsoft-prod.deb
+                            sudo apt-get update
+                            sudo apt-get install -y dotnet-sdk-8.0
+                            dotnet --version
+                        '''
                     }
-                    stage('Setup Node.js and Angular CLI') {
-                        steps {
-                            sh '''
-                                # Install Node.js
-                                curl -sL https://rpm.nodesource.com/setup_20.x | sudo bash -
-                                sudo yum install -y nodejs
-                                
-                                # Verify installations
-                                node --version
-                                npm --version
-                                
-                                # Install Angular CLI
-                                sudo npm install -g @angular/cli
-                                ng version
-                            '''
-                        }
+                }
+                stage('Setup Node.js and Angular CLI') {
+                    steps {
+                        sh '''
+                            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                            sudo apt-get install -y nodejs
+                            node --version
+                            npm --version
+                            sudo npm install -g @angular/cli
+                            ng version
+                        '''
                     }
                 }
             }
+        }
 
         stage('Restore Dependencies') {
             when { environment name: 'BUILD_NEEDED', value: 'true' }
@@ -195,4 +192,3 @@ pipeline {
             echo 'Build or deployment failed!'
         }
     }
-}
