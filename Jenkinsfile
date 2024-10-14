@@ -3,32 +3,31 @@ pipeline {
 
     environment {
         DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
-        // Hardcoded DockerHub credentials (should be moved to Jenkins credentials store)
+        // DockerHub credentials (consider moving to Jenkins credentials store)
         DOCKERHUB_USERNAME = "ahmedalmahdi"
         DOCKERHUB_PASSWORD = "1234qweasd"
         DOCKER_IMAGE_FRONT = "ahmedalmahdi/clientside"
         DOCKER_IMAGE_BACK = "ahmedalmahdi/serverside"
-
         // GitHub repository URL
         GITHUB_REPO = "https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git"
+        // New environment variables for .NET and Node.js
+        DOTNET_ROOT = "$HOME/.dotnet"
+        PATH = "$PATH:$HOME/.dotnet:$HOME/.dotnet/tools:$HOME/.nvm/versions/node/v20.x.x/bin:$HOME/.npm-global/bin"
+        NVM_DIR = "$HOME/.nvm"
     }
 
     stages {
         stage('Check for Changes') {
             steps {
                 script {
-                    // Check if the repository already exists
                     def repoExists = fileExists('MCIT-DevOps-Project')
                     if (repoExists) {
                         dir('MCIT-DevOps-Project') {
-                            // Fetch the latest changes
                             sh "git fetch origin"
-                            // Check for changes
                             def changes = sh(script: "git diff origin/main", returnStdout: true).trim()
                             if (changes) {
                                 echo "Changes detected. Proceeding with build."
                                 env.BUILD_NEEDED = 'true'
-                                // Pull the latest changes
                                 sh "git pull origin main"
                             } else {
                                 echo "No changes detected. Skipping build."
@@ -50,23 +49,30 @@ pipeline {
                 stage('Setup .NET SDK') {
                     steps {
                         sh '''
-                            wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-                            sudo dpkg -i packages-microsoft-prod.deb
-                            sudo apt-get update
-                            sudo apt-get install -y dotnet-sdk-8.0
-                            dotnet --version
+                            set -e
+                            export DOTNET_ROOT=$HOME/.dotnet
+                            export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
+                            mkdir -p $DOTNET_ROOT
+                            curl -L https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --install-dir $DOTNET_ROOT
+                            dotnet --version || (echo ".NET SDK installation failed" && exit 1)
                         '''
                     }
                 }
                 stage('Setup Node.js and Angular CLI') {
                     steps {
                         sh '''
-                            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-                            sudo apt-get install -y nodejs
-                            node --version
-                            npm --version
-                            sudo npm install -g @angular/cli
-                            ng version
+                            set -e
+                            export NVM_DIR="$HOME/.nvm"
+                            mkdir -p $NVM_DIR
+                            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+                            . "$NVM_DIR/nvm.sh"
+                            nvm install 20
+                            nvm use 20
+                            node --version || (echo "Node.js installation failed" && exit 1)
+                            npm --version || (echo "npm installation failed" && exit 1)
+                            npm install -g @angular/cli
+                            export PATH=$PATH:$HOME/.npm-global/bin
+                            ng version || (echo "Angular CLI installation failed" && exit 1)
                         '''
                     }
                 }
@@ -78,15 +84,22 @@ pipeline {
             parallel {
                 stage('Restore .NET Dependencies') {
                     steps {
-                        sh 'dotnet restore ServerSide/Api/Api.csproj'
-                        sh 'dotnet restore ServerSide/BL/BL.csproj'
-                        sh 'dotnet restore ServerSide/DA/DA.csproj'
+                        sh '''
+                            . "$HOME/.dotnet/dotnet-install.sh"
+                            dotnet restore ServerSide/Api/Api.csproj
+                            dotnet restore ServerSide/BL/BL.csproj
+                            dotnet restore ServerSide/DA/DA.csproj
+                        '''
                     }
                 }
                 stage('Install Node.js Dependencies') {
                     steps {
                         dir('ClientSide') {
-                            sh 'npm install'
+                            sh '''
+                                . "$NVM_DIR/nvm.sh"
+                                nvm use 20
+                                npm install
+                            '''
                         }
                     }
                 }
@@ -98,15 +111,22 @@ pipeline {
             parallel {
                 stage('Build .NET Backend') {
                     steps {
-                        sh 'dotnet build ServerSide/Api/Api.csproj --configuration Release'
-                        sh 'dotnet build ServerSide/BL/BL.csproj --configuration Release'
-                        sh 'dotnet build ServerSide/DA/DA.csproj --configuration Release'
+                        sh '''
+                            . "$HOME/.dotnet/dotnet-install.sh"
+                            dotnet build ServerSide/Api/Api.csproj --configuration Release
+                            dotnet build ServerSide/BL/BL.csproj --configuration Release
+                            dotnet build ServerSide/DA/DA.csproj --configuration Release
+                        '''
                     }
                 }
                 stage('Build Angular Frontend') {
                     steps {
                         dir('ClientSide') {
-                            sh 'ng build --configuration production'
+                            sh '''
+                                . "$NVM_DIR/nvm.sh"
+                                nvm use 20
+                                ng build --configuration production
+                            '''
                         }
                     }
                 }
@@ -118,13 +138,20 @@ pipeline {
             parallel {
                 stage('Run .NET Tests') {
                     steps {
-                        sh 'dotnet test ServerSide/Api.Tests/Api.Tests.csproj'
+                        sh '''
+                            . "$HOME/.dotnet/dotnet-install.sh"
+                            dotnet test ServerSide/Api.Tests/Api.Tests.csproj
+                        '''
                     }
                 }
                 stage('Run Angular Tests') {
                     steps {
                         dir('ClientSide') {
-                            sh 'ng test --watch=false --browsers=ChromeHeadless'
+                            sh '''
+                                . "$NVM_DIR/nvm.sh"
+                                nvm use 20
+                                ng test --watch=false --browsers=ChromeHeadless
+                            '''
                         }
                     }
                 }
@@ -134,7 +161,10 @@ pipeline {
         stage('Publish') {
             when { environment name: 'BUILD_NEEDED', value: 'true' }
             steps {
-                sh 'dotnet publish ServerSide/Api/Api.csproj --configuration Release --output ./publish/backend'
+                sh '''
+                    . "$HOME/.dotnet/dotnet-install.sh"
+                    dotnet publish ServerSide/Api/Api.csproj --configuration Release --output ./publish/backend
+                '''
             }
         }
 
