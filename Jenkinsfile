@@ -10,7 +10,7 @@ pipeline {
         DOCKER_IMAGE_BACK = "ahmedalmahdi/serverside"
         
         // Hardcoded GitHub token
-        GITHUB_REPO = "https://github.com/ahmed-el-mahdyMCIT-DevOps-Project.git"
+        GITHUB_REPO = "https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git"
     }
 
     stages {
