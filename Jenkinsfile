@@ -46,16 +46,14 @@ pipeline {
                 stage('Build Backend Docker Image') {
                     steps {
                         dir('ServerSide') {
-                            sh "pwd"
-                            sh "ls"
-                            sh "docker build -t ${DOCKER_IMAGE_BACK} -f ."
+                            sh "docker build -t ${DOCKER_IMAGE_BACK} ."
                         }
                     }
                 }
                 stage('Build Frontend Docker Image') {
                     steps {
                         dir('ClientSide') {
-                            sh "docker build -t ${DOCKER_IMAGE_FRONT} -f ."
+                            sh "docker build -t ${DOCKER_IMAGE_FRONT} ."
                         }
                     }
                 }
