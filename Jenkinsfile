@@ -3,13 +3,13 @@ pipeline {
 
     environment {
         DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
-        // Hardcoded DockerHub credentials
+        // Hardcoded DockerHub credentials (should be moved to Jenkins credentials store)
         DOCKERHUB_USERNAME = "ahmedalmahdi"
         DOCKERHUB_PASSWORD = "1234qweasd"
         DOCKER_IMAGE_FRONT = "ahmedalmahdi/clientside"
         DOCKER_IMAGE_BACK = "ahmedalmahdi/serverside"
 
-        // Hardcoded GitHub token
+        // GitHub repository URL
         GITHUB_REPO = "https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git"
     }
 
@@ -23,7 +23,7 @@ pipeline {
                         dir('MCIT-DevOps-Project') {
                             // Fetch the latest changes
                             sh "git fetch origin"
-                            // Check if there are any changes
+                            // Check for changes
                             def changes = sh(script: "git diff origin/main", returnStdout: true).trim()
                             if (changes) {
                                 echo "Changes detected. Proceeding with build."
@@ -37,7 +37,7 @@ pipeline {
                         }
                     } else {
                         echo "Repository doesn't exist locally. Cloning it."
-                        sh "git clone https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git"
+                        sh "git clone ${GITHUB_REPO}"
                         env.BUILD_NEEDED = 'true'
                     }
                 }
@@ -173,7 +173,6 @@ pipeline {
             when { environment name: 'BUILD_NEEDED', value: 'true' }
             steps {
                 script {
-                    // Deploying the Docker images using Kubernetes manifests
                     sh "kubectl apply -f k8s-manifets/"
                 }
             }
@@ -192,3 +191,4 @@ pipeline {
             echo 'Build or deployment failed!'
         }
     }
+}
