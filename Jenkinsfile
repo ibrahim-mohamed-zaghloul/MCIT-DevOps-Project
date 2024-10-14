@@ -1,87 +1,83 @@
 pipeline {
     agent any
-
-    environment {
-        DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
-        DOCKERHUB_USERNAME = "ahmedalmahdi"
-        DOCKERHUB_PASSWORD = "1234qweasd"
-        DOCKER_IMAGE_FRONT = "ahmedalmahdi/clientside"
-        DOCKER_IMAGE_BACK = "ahmedalmahdi/serverside"
-        GITHUB_REPO = "https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git"
-        DOTNET_ROOT = "$HOME/.dotnet"
-        PATH = "$PATH:$HOME/.dotnet:$HOME/.dotnet/tools:$HOME/.nvm/versions/node/v20.x.x/bin:$HOME/.npm-global/bin"
-        NVM_DIR = "$HOME/.nvm"
-    }
-
     stages {
-        stage('Check for Changes') {
+        stage('Clone Repository') {
             steps {
-                script {
-                    def repoExists = fileExists('MCIT-DevOps-Project')
-                    if (repoExists) {
-                        dir('MCIT-DevOps-Project') {
-                            sh "git fetch origin"
-                            def changes = sh(script: "git diff origin/main", returnStdout: true).trim()
-                            if (changes) {
-                                echo "Changes detected. Proceeding with build."
-                                env.BUILD_NEEDED = 'true'
-                                sh "git pull origin main"
-                            } else {
-                                echo "No changes detected. Skipping build."
-                                env.BUILD_NEEDED = 'false'
-                            }
-                        }
-                    } else {
-                        echo "Repository doesn't exist locally. Cloning it."
-                        sh "git clone ${GITHUB_REPO}"
-                        env.BUILD_NEEDED = 'true'
-                    }
-                }
+                git 'https://github.com/Michael-Haleem/DockerizedCRUD3TierWebApp.git'
             }
         }
-
-        stage('Build Docker Images') {
-            when { environment name: 'BUILD_NEEDED', value: 'true' }
-            parallel {
-                stage('Build Backend Docker Image') {
-                    steps {
-                        dir('ServerSide') {
-                            sh "docker build -t ${DOCKER_IMAGE_BACK} ."
-                        }
-                    }
-                }
-                stage('Build Frontend Docker Image') {
-                    steps {
-                        dir('ClientSide') {
-                            sh "docker build -t ${DOCKER_IMAGE_FRONT} ."
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Push Docker Images') {
-            when { environment name: 'BUILD_NEEDED', value: 'true' }
+        stage('Install .NET SDK') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-                    sh "docker push ${DOCKER_IMAGE_BACK}"
-                    sh "docker push ${DOCKER_IMAGE_FRONT}"
+                sh 'wget https://dot.net/v1/dotnet-install.sh'
+                sh 'chmod +x ./dotnet-install.sh'
+                sh './dotnet-install.sh --version 8.0.402'
+            }
+        }
+        stage('Install Node.js and npm') {
+            steps {
+                sh 'curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -'
+                sh 'sudo apt-get install -y nodejs'
+            }
+        }
+        stage('Install Angular CLI') {
+            steps {
+                sh 'sudo npm install -g @angular/cli@18.2.7' // Install Angular CLI with sudo
+            }
+        }
+        stage('Install Server-Side Dependencies') {
+            steps {
+                dir('ServerSide') { // Navigate to the ServerSide directory
+                    sh 'dotnet restore' // Restore .NET dependencies
                 }
             }
         }
-    }
-
-    post {
-        always {
-            cleanWs()
-            sh 'docker logout'
+        stage('Install Client-Side Dependencies') {
+            steps {
+                dir('ClientSide') { // Navigate to the ClientSide directory
+                    sh 'npm install' // Install Angular project dependencies
+                }
+            }
         }
-        success {
-            echo 'Build and deployment successful!'
+        stage('Run Server-Side Tests') {
+            steps {
+                dir('ServerSide') { // Navigate to the ServerSide directory
+                    sh 'dotnet test' // Run .NET tests
+                }
+            }
         }
-        failure {
-            echo 'Build or deployment failed!'
+        stage('Run Client-Side Tests') {
+            steps {
+                dir('ClientSide') { // Navigate to the ClientSide directory
+                    sh 'ng test --watch=false --browsers=ChromeHeadless' // Run Angular tests
+                }
+            }
+        }
+        stage('Build Server-Side Docker Image') {
+            steps {
+                dir('ServerSide') { // Navigate to the ServerSide directory
+                    sh 'docker build -t serverside .'
+                }
+            }
+        }
+        stage('Build Client-Side Docker Image') {
+            steps {
+                dir('ClientSide') { // Navigate to the ClientSide directory
+                    sh 'docker build -t clientside .'
+                }
+            }
+        }
+        stage('Push Server-Side Docker Image') {
+            steps {
+                sh 'docker login -u ibrahim_zaghloul -p 9$29%3kZ2Q%DHedz' // Login to Docker Hub
+                sh 'docker tag serverside ibrahimmohamedzaghloul/serverside:latest'
+                sh 'docker push ibrahimmohamedzaghloul/serverside:latest'
+            }
+        }
+        stage('Push Client-Side Docker Image') {
+            steps {
+                sh 'docker tag clientside ibrahimmohamedzaghloul/clientside:latest'
+                sh 'docker push ibrahimmohamedzaghloul/clientside:latest'
+            }
         }
     }
 }
