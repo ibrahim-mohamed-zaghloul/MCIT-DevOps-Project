@@ -50,10 +50,9 @@ pipeline {
                 stage('Setup .NET SDK') {
                     steps {
                         sh '''
-                            wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-                            sudo dpkg -i packages-microsoft-prod.deb
-                            sudo apt-get update
-                            sudo apt-get install -y dotnet-sdk-8.0
+                                    wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+                            sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+                            sudo yum install -y dotnet-sdk-8.0
                             dotnet --version
                         '''
                     }
@@ -61,9 +60,11 @@ pipeline {
                 stage('Setup Node.js and Angular CLI') {
                     steps {
                         sh '''
-                            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-                            sudo apt-get install -y nodejs
+                            curl -sL https://rpm.nodesource.com/setup_20.x | sudo bash -
+                                    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                            sudo yum install -y nodejs
                             node --version
+                                    npm --version6
                             npm --version
                             sudo npm install -g @angular/cli
                             ng version
