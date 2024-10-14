@@ -2,8 +2,9 @@ pipeline {
     agent any
     stages {
         stage('Clone Repository') {
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/Michael-Haleem/DockerizedCRUD3TierWebApp.git'
+                git 'https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git'
             }
         }
         stage('Install .NET SDK') {
@@ -60,23 +61,39 @@ pipeline {
             }
         }
         stage('Build Client-Side Docker Image') {
+                dir('ClientSide') { // Navigate to the ClientSide directory
+                    sh 'ng test --watch=false --browsers=ChromeHeadless' // Run Angular tests
+                }
+            }
+        }
+        stage('Build Server-Side Docker Image') {
             steps {
+                dir('ServerSide') { // Navigate to the ServerSide directory
+                    sh 'docker build -t serverside .'
+                }
+            }
+        }
+        stage('Build Client-Side Docker Image') {
+            steps {
+                dir('ClientSide') { // Navigate to the ClientSide directory
+                    sh 'docker build -t clientside .'
                 dir('ClientSide') { // Navigate to the ClientSide directory
                     sh 'docker build -t clientside .'
                 }
             }
         }
         stage('Push Server-Side Docker Image') {
+        stage('Push Server-Side Docker Image') {
             steps {
-                sh 'docker login -u ibrahim_zaghloul -p 9$29%3kZ2Q%DHedz' // Login to Docker Hub
-                sh 'docker tag serverside ibrahimmohamedzaghloul/serverside:latest'
-                sh 'docker push ibrahimmohamedzaghloul/serverside:latest'
+                sh 'docker login -u ahmedalmahdi -p 1234qweasd' // Login to Docker Hub
+                sh 'docker tag serverside ahmedalmahdi/serverside:latest'
+                sh 'docker push ahmedalmahdi/serverside:latest'
             }
         }
         stage('Push Client-Side Docker Image') {
             steps {
-                sh 'docker tag clientside ibrahimmohamedzaghloul/clientside:latest'
-                sh 'docker push ibrahimmohamedzaghloul/clientside:latest'
+                sh 'docker tag clientside ahmedalmahdi/clientside:latest'
+                sh 'docker push ahmedalmahdi/clientside:latest'
             }
         }
     }
