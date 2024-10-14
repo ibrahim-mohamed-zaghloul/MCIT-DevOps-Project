@@ -46,6 +46,8 @@ pipeline {
                 stage('Build Backend Docker Image') {
                     steps {
                         dir('ServerSide') {
+                            sh "pwd"
+                            sh "ls"
                             sh "docker build -t ${DOCKER_IMAGE_BACK} -f ."
                         }
                     }
