@@ -59,12 +59,9 @@ pipeline {
                     steps {
                         sh '''
                             set -e
-                            export NVM_DIR="$HOME/.nvm"
-                            mkdir -p $NVM_DIR
-                            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash || (echo "NVM installation failed" && exit 1)
-                            . "$NVM_DIR/nvm.sh"
-                            nvm install 20 || (echo "Node.js installation failed" && exit 1)
-                            nvm use 20
+                            # Install Node.js directly to avoid NVM issues
+                            curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+                            sudo apt-get install -y nodejs
                             node --version
                             npm --version
                             npm cache clean --force
@@ -93,8 +90,6 @@ pipeline {
                     steps {
                         dir('ClientSide') {
                             sh '''
-                                . "$NVM_DIR/nvm.sh"
-                                nvm use 20
                                 npm install
                             '''
                         }
@@ -120,8 +115,6 @@ pipeline {
                     steps {
                         dir('ClientSide') {
                             sh '''
-                                . "$NVM_DIR/nvm.sh"
-                                nvm use 20
                                 ng build --configuration production
                             '''
                         }
@@ -145,8 +138,6 @@ pipeline {
                     steps {
                         dir('ClientSide') {
                             sh '''
-                                . "$NVM_DIR/nvm.sh"
-                                nvm use 20
                                 ng test --watch=false --browsers=ChromeHeadless
                             '''
                         }
