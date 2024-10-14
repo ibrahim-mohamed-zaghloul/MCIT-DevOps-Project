@@ -37,7 +37,7 @@ pipeline {
                         }
                     } else {
                         echo "Repository doesn't exist locally. Cloning it."
-                        sh "git clone https://github.com/ahmed-el-mahdyMCIT-DevOps-Project.git"
+                        sh "git clone https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git"
                         env.BUILD_NEEDED = 'true'
                     }
                 }
