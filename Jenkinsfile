@@ -74,30 +74,30 @@ pipeline {
             }
         }
 
-        // stage('Restore Dependencies') {
-        //     when { environment name: 'BUILD_NEEDED', value: 'true' }
-        //     parallel {
-        //         stage('Restore .NET Dependencies') {
-        //             steps {
-        //                 sh '''
-        //                     . "$HOME/.dotnet/dotnet-install.sh"
-        //                     dotnet restore ServerSide/Api/Api.csproj
-        //                     dotnet restore ServerSide/BL/BL.csproj
-        //                     dotnet restore ServerSide/DA/DA.csproj
-        //                 '''
-        //             }
-        //         }
-        //         stage('Install Node.js Dependencies') {
-        //             steps {
-        //                 dir('ClientSide') {
-        //                     sh '''
-        //                         npm install
-        //                     '''
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Restore Dependencies') {
+            when { environment name: 'BUILD_NEEDED', value: 'true' }
+            parallel {
+                stage('Restore .NET Dependencies') {
+                    steps {
+                        sh '''
+                            . "$HOME/.dotnet/dotnet-install.sh"
+                            dotnet restore ServerSide/Api/Api.csproj
+                            dotnet restore ServerSide/BL/BL.csproj
+                            dotnet restore ServerSide/DA/DA.csproj
+                        '''
+                    }
+                }
+                stage('Install Node.js Dependencies') {
+                    steps {
+                        dir('ClientSide') {
+                            sh '''
+                                npm install
+                            '''
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Build Applications') {
             when { environment name: 'BUILD_NEEDED', value: 'true' }
