@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ProductService, Product } from '../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Observable, of, timer } from 'rxjs';
-import { catchError, mergeMap, retry, take } from 'rxjs/operators';
+import { Observable, of, timer, Subject } from 'rxjs';
+import { catchError, mergeMap, retry, take, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product',
@@ -12,17 +12,23 @@ import { catchError, mergeMap, retry, take } from 'rxjs/operators';
   templateUrl: './product.component.html',
   styleUrl: './product.component.css'
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   product: Product = { id: 0, name: '', price: 0 };
   editMode = false;
   formSubmitted = false;
   @ViewChild('productForm') productForm!: NgForm;
+  private destroy$ = new Subject<void>();
 
   constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
     this.loadProducts();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadProducts(): void {
@@ -34,7 +40,8 @@ export class ProductComponent implements OnInit {
           return of(null);
         })
       )),
-      retry({ count: 14, delay: 2000 })
+      retry({ count: 14, delay: 2000 }),
+      takeUntil(this.destroy$)
     ).subscribe((data) => {
       if (data) {
         this.products = data;
@@ -47,8 +54,10 @@ export class ProductComponent implements OnInit {
 
   createProduct(): void {
     this.formSubmitted = true;
-    if (this.productForm.valid) {
-      this.productService.createProduct(this.product).subscribe(() => {
+    if (this.productForm && this.productForm.valid) {
+      this.productService.createProduct(this.product).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(() => {
         this.loadProducts();
         this.resetForm();
       });
@@ -63,8 +72,10 @@ export class ProductComponent implements OnInit {
 
   updateProduct(): void {
     this.formSubmitted = true;
-    if (this.productForm.valid) {
-      this.productService.updateProduct(this.product.id, this.product).subscribe(() => {
+    if (this.productForm && this.productForm.valid) {
+      this.productService.updateProduct(this.product.id, this.product).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(() => {
         this.loadProducts();
         this.resetForm();
       });
@@ -72,7 +83,9 @@ export class ProductComponent implements OnInit {
   }
 
   deleteProduct(id: number): void {
-    this.productService.deleteProduct(id).subscribe(() => {
+    this.productService.deleteProduct(id).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
       this.loadProducts();
     });
   }

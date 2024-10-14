@@ -6,7 +6,7 @@ services:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=MasterKey0
     ports:
-      - "1433:1433"
+      - "1435:1433"
     networks:
       - app-network
     volumes:
@@ -23,7 +23,7 @@ services:
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=AppDb;User Id=sa;Password=MasterKey0;TrustServerCertificate=True;  
       - AllowedOrigins=http://localhost
     ports:
-      - "8080:8080"
+      - "8082:8080"
     networks:
       - app-network
     
@@ -35,7 +35,7 @@ services:
     ports:
       - "80:80"
     environment:
-      - API_URL=http://localhost:8080/api
+      - API_URL=http://localhost:8082/api
     depends_on:
       - api
     networks:
