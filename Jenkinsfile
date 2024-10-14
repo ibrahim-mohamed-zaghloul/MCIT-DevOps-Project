@@ -3,14 +3,11 @@ pipeline {
 
     environment {
         DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
-        // DockerHub credentials (consider moving to Jenkins credentials store)
         DOCKERHUB_USERNAME = "ahmedalmahdi"
         DOCKERHUB_PASSWORD = "1234qweasd"
         DOCKER_IMAGE_FRONT = "ahmedalmahdi/clientside"
         DOCKER_IMAGE_BACK = "ahmedalmahdi/serverside"
-        // GitHub repository URL
         GITHUB_REPO = "https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git"
-        // New environment variables for .NET and Node.js
         DOTNET_ROOT = "$HOME/.dotnet"
         PATH = "$PATH:$HOME/.dotnet:$HOME/.dotnet/tools:$HOME/.nvm/versions/node/v20.x.x/bin:$HOME/.npm-global/bin"
         NVM_DIR = "$HOME/.nvm"
@@ -74,9 +71,10 @@ pipeline {
                             npm install -g @angular/cli || (echo "Angular CLI installation failed" && exit 1)
                             ng version
                         '''
-
                     }
                 }
+            }
+        }
 
         stage('Restore Dependencies') {
             when { environment name: 'BUILD_NEEDED', value: 'true' }
@@ -201,9 +199,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             when { environment name: 'BUILD_NEEDED', value: 'true' }
             steps {
-                script {
-                    sh "kubectl apply -f k8s-manifets/"
-                }
+                sh "kubectl apply -f k8s-manifets/"
             }
         }
     }
