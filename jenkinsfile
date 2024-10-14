@@ -10,8 +10,7 @@ pipeline {
         DOCKER_IMAGE_BACK = "ahmedalmahdi/serverside"
         
         // Hardcoded GitHub token
-        GITHUB_TOKEN = "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"
-        GITHUB_REPO = "https://github.com/ciscosky/MCIT-DevOps-Project.git"
+        GITHUB_REPO = "https://github.com/ahmed-el-mahdyMCIT-DevOps-Project.git"
     }
 
     stages {
@@ -38,7 +37,7 @@ pipeline {
                         }
                     } else {
                         echo "Repository doesn't exist locally. Cloning it."
-                        sh "git clone https://$GITHUB_TOKEN@github.com/ciscosky/MCIT-DevOps-Project.git"
+                        sh "git clone https://github.com/ahmed-el-mahdyMCIT-DevOps-Project.git"
                         env.BUILD_NEEDED = 'true'
                     }
                 }
