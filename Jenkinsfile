@@ -40,123 +40,6 @@ pipeline {
             }
         }
 
-        // stage('Setup Build Environment') {
-        //     when { environment name: 'BUILD_NEEDED', value: 'true' }
-        //     parallel {
-        //         stage('Setup .NET SDK') {
-        //             steps {
-        //                 sh '''
-        //                     set -e
-        //                     export DOTNET_ROOT=$HOME/.dotnet
-        //                     export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
-        //                     mkdir -p $DOTNET_ROOT
-        //                     curl -L https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --install-dir $DOTNET_ROOT
-        //                     dotnet --version || (echo ".NET SDK installation failed" && exit 1)
-        //                 '''
-        //             }
-        //         }
-        //         stage('Setup Node.js and Angular CLI') {
-        //             steps {
-        //                 sh '''
-        //                     set -e
-        //                     # Install Node.js directly to avoid NVM issues
-        //                     curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-        //                     apt-get update
-        //                     apt-get install -y nodejs
-        //                     node --version
-        //                     npm --version
-        //                     npm cache clean --force
-        //                     npm install -g @angular/cli || (echo "Angular CLI installation failed" && exit 1)
-        //                     ng version
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Restore Dependencies') {
-        //     when { environment name: 'BUILD_NEEDED', value: 'true' }
-        //     parallel {
-        //         stage('Restore .NET Dependencies') {
-        //             steps {
-        //                 sh '''
-        //                     . "$HOME/.dotnet/dotnet-install.sh"
-        //                     dotnet restore ServerSide/Api/Api.csproj
-        //                     dotnet restore ServerSide/BL/BL.csproj
-        //                     dotnet restore ServerSide/DA/DA.csproj
-        //                 '''
-        //             }
-        //         }
-        //         stage('Install Node.js Dependencies') {
-        //             steps {
-        //                 dir('ClientSide') {
-        //                     sh '''
-        //                         npm install
-        //                     '''
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Build Applications') {
-        //     when { environment name: 'BUILD_NEEDED', value: 'true' }
-        //     parallel {
-        //         stage('Build .NET Backend') {
-        //             steps {
-        //                 sh '''
-        //                     . "$HOME/.dotnet/dotnet-install.sh"
-        //                     dotnet build ServerSide/Api/Api.csproj --configuration Release
-        //                     dotnet build ServerSide/BL/BL.csproj --configuration Release
-        //                     dotnet build ServerSide/DA/DA.csproj --configuration Release
-        //                 '''
-        //             }
-        //         }
-        //         stage('Build Angular Frontend') {
-        //             steps {
-        //                 dir('ClientSide') {
-        //                     sh '''
-        //                         ng build --configuration production
-        //                     '''
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Run Unit Tests') {
-        //     when { environment name: 'BUILD_NEEDED', value: 'true' }
-        //     parallel {
-        //         stage('Run .NET Tests') {
-        //             steps {
-        //                 sh '''
-        //                     . "$HOME/.dotnet/dotnet-install.sh"
-        //                     dotnet test ServerSide/Api.Tests/Api.Tests.csproj
-        //                 '''
-        //             }
-        //         }
-        //         stage('Run Angular Tests') {
-        //             steps {
-        //                 dir('ClientSide') {
-        //                     sh '''
-        //                         ng test --watch=false --browsers=ChromeHeadless
-        //                     '''
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Publish') {
-        //     when { environment name: 'BUILD_NEEDED', value: 'true' }
-        //     steps {
-        //         sh '''
-        //             . "$HOME/.dotnet/dotnet-install.sh"
-        //             dotnet publish ServerSide/Api/Api.csproj --configuration Release --output ./publish/backend
-        //         '''
-        //     }
-        // }
-
         stage('Build Docker Images') {
             when { environment name: 'BUILD_NEEDED', value: 'true' }
             parallel {
@@ -187,14 +70,7 @@ pipeline {
                 }
             }
         }
-
-    //     stage('Deploy to Kubernetes') {
-    //         when { environment name: 'BUILD_NEEDED', value: 'true' }
-    //         steps {
-    //             sh "kubectl apply -f k8s-manifets/"
-    //         }
-    //     }
-    // }
+    }
 
     post {
         always {
