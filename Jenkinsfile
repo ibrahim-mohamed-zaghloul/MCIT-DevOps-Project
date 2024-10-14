@@ -64,20 +64,19 @@ pipeline {
                             set -e
                             export NVM_DIR="$HOME/.nvm"
                             mkdir -p $NVM_DIR
-                            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+                            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash || (echo "NVM installation failed" && exit 1)
                             . "$NVM_DIR/nvm.sh"
-                            nvm install 20
+                            nvm install 20 || (echo "Node.js installation failed" && exit 1)
                             nvm use 20
-                            node --version || (echo "Node.js installation failed" && exit 1)
-                            npm --version || (echo "npm installation failed" && exit 1)
-                            npm install -g @angular/cli
-                            export PATH=$PATH:$HOME/.npm-global/bin
-                            ng version || (echo "Angular CLI installation failed" && exit 1)
+                            node --version
+                            npm --version
+                            npm cache clean --force
+                            npm install -g @angular/cli || (echo "Angular CLI installation failed" && exit 1)
+                            ng version
                         '''
+
                     }
                 }
-            }
-        }
 
         stage('Restore Dependencies') {
             when { environment name: 'BUILD_NEEDED', value: 'true' }
