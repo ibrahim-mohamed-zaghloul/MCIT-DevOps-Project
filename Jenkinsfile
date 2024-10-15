@@ -68,15 +68,15 @@ pipeline {
         }
         stage('Push Server-Side Docker Image') {
             steps {
-                sh 'docker login -u your_username -p your_password' // Login to Docker Hub
-                sh 'docker tag serverside your_dockerhub_username/serverside:latest'
-                sh 'docker push your_dockerhub_username/serverside:latest'
+                sh 'docker login -u ahmedalmahdi -p 1234qweasd' // Login to Docker Hub
+                sh 'docker tag serverside ahmedalmahdi/serverside:latest'
+                sh 'docker push ahmedalmahdi/serverside:latest'
             }
         }
         stage('Push Client-Side Docker Image') {
             steps {
-                sh 'docker tag clientside your_dockerhub_username/clientside:latest'
-                sh 'docker push your_dockerhub_username/clientside:latest'
+                sh 'docker tag clientside ahmedalmahdi/clientside:latest'
+                sh 'docker push ahmedalmahdi/clientside:latest'
             }
         }
     }
