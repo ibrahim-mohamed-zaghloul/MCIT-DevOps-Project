@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Michael-Haleem/DockerizedCRUD3TierWebApp.git'
+                git 'https://https://github.com/ahmed-el-mahdy/MCIT-DevOps-Project.git'
             }
         }
         stage('Install .NET SDK') {
