@@ -50,6 +50,48 @@ Ensure Minikube is installed and running, then apply the Kubernetes manifest fil
       
      kubectl apply -f k8s-manifests/
 
+## 🤖 Ansible Playbooks
+This project utilizes Ansible for automating application deployments and configuration management. The playbooks are designed to:
+- Install necessary packages.
+- Configure application settings.
+- Manage service states.
+
+### How to Run Ansible Playbooks
+
+-   Ensure you have Ansible installed and the inventory file set up with your target hosts.
+-   
+To execute an Ansible playbook, use the following command:
+      ```bash
+   
+        ansible-playbook -i inventory playbook.yml
+
+
+
+## 🌱 Terraform
+Terraform is used in this project to provision the AWS infrastructure. It allows for Infrastructure as Code (IaC), ensuring reproducibility and version control.
+
+### Resources Provisioned
+- **VPC**: Virtual Private Cloud for network isolation.
+- **Subnets**: Configured for public and private access.
+- **EC2 Instances**: For running applications and services.
+- **RDS**: MySQL database instance for data storage.
+
+###  Make sure you have Terraform installed and configured with your AWS credentials.
+
+### How to Deploy with Terraform
+1. Initialize Terraform:
+      ```bash
+      terraform init
+2. Plan the deployment:
+      ```bash
+      terraform plan
+1. Apply the changes:
+      ```bash
+      terraform apply
+
+
+
+
 ### 🧰 CI/CD Pipeline
 The CI/CD pipeline, managed using **Jenkins**, automates the process from code commits to deployment. It includes:
 
