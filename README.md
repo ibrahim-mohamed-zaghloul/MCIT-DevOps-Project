@@ -1,4 +1,4 @@
-# 🛠️ MCIT DevOps Project
+## 🛠️ MCIT DevOps Project
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/ahmed-el-mahdy/MCIT-DevOps-Project)
 ![GitHub contributors](https://img.shields.io/github/contributors/ahmed-el-mahdy/MCIT-DevOps-Project)
@@ -23,6 +23,7 @@ This project aims to streamline deployment and management of applications using 
 - [ibrahim-mohamed-zaghloul](https://github.com/ibrahim-mohamed-zaghloul)
 - [Michael-Haleem](https://github.com/Michael-Haleem)
 - [Eng-Mohamed-Emad](https://github.com/Eng-Mohamed-Emad)
+- [zabdeln4](https://github.com/zabdeln4)
 
 ## 🚀 Project Overview
 
