@@ -5,6 +5,7 @@ pipeline {
         PATH = "${env.PATH}:${DOTNET_PATH}" // Add .NET to PATH globally
         CHROME_BIN = '/usr/bin/google-chrome' // Set Chrome binary path
     }
+    
     stages {
         stage('Clone Repository') {
             steps {
@@ -21,27 +22,6 @@ pipeline {
         stage('Verify .NET Installation') {
             steps {
                 sh 'dotnet --version' // Check if dotnet command works
-            }
-        }
-        stage('Install Node.js and npm') {
-            steps {
-                sh 'curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -'
-                sh 'sudo apt-get install -y nodejs'
-            }
-        }
-        stage('Install Angular CLI') {
-            steps {
-                sh 'sudo npm install -g @angular/cli@18.2.7'
-            }
-        }
-        stage('Install Chrome') {
-            steps {
-                sh '''
-                    sudo apt-get update
-                    sudo apt-get install -y wget
-                    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-                    sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-                '''
             }
         }
         stage('Install Server-Side Dependencies') {

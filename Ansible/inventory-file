@@ -1,2 +1,0 @@
-[bastion-srv]
-webserver1 ansible_host=10.158.7.71
