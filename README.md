@@ -1,9 +1,23 @@
-## 🛠️ MCIT DevOps Project
+# 🛠️ MCIT DevOps Project
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/ahmed-el-mahdy/MCIT-DevOps-Project)
 ![GitHub contributors](https://img.shields.io/github/contributors/ahmed-el-mahdy/MCIT-DevOps-Project)
 ![GitHub stars](https://img.shields.io/github/stars/ahmed-el-mahdy/MCIT-DevOps-Project?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/ahmed-el-mahdy/MCIT-DevOps-Project?style=social)
+
+---
+
+## 🌟 Project Overview
+
+The **MCIT DevOps Project** aims to streamline the deployment and management of applications using **AWS EKS**, **Jenkins**, and **Terraform**, enabling efficient CI/CD pipelines. This project integrates multiple DevOps tools and practices to build a fully automated pipeline for deploying a three-tier application.
+
+### 🔧 Key Technologies
+- 🐳 **Docker** for containerization
+- ☸️ **Kubernetes** for container orchestration
+- 🏗️ **Terraform** for Infrastructure as Code (IaC)
+- 🔧 **Jenkins** for CI/CD pipeline automation
+
+---
 
 ## 🛠️ Tools Used
 
@@ -22,29 +36,24 @@
 ![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
 
-
-This project aims to streamline deployment and management of applications using AWS EKS, Jenkins, and Terraform, enabling efficient CI/CD pipelines.
-
+---
 
 ## 👥 Collaborators
 
+A special thanks to our collaborators who helped make this project a success:
 - [ibrahim-mohamed-zaghloul](https://github.com/ibrahim-mohamed-zaghloul)
 - [Michael-Haleem](https://github.com/Michael-Haleem)
 - [Eng-Mohamed-Emad](https://github.com/Eng-Mohamed-Emad)
 - [zabdeln4](https://github.com/zabdeln4)
 
-## 🚀 Project Overview
+---
 
-This project integrates multiple DevOps tools and practices to build a fully automated pipeline for deploying a three-tier application. It leverages:
-- 🐳 **Docker** for containerization
-- ☸️ **Kubernetes** for container orchestration
-- 🏗️ **Terraform** for infrastructure as code (IaC)
-- 🔧 **Jenkins** for CI/CD pipeline automation
+## 📝 Recent Updates
+- 🚀 Environment variables added to Kubernetes deployments for improved configurability.
+- 🧪 CI/CD pipeline enhanced with automated testing using Jenkins.
+- 🐳 Docker Compose and Kubernetes manifest files updated for Minikube compatibility.
 
-### 📝 Recent Updates
-- Environment variables added to Kubernetes deployments.
-- CI/CD pipeline enhanced with automated testing using Jenkins.
-- Docker Compose and Kubernetes manifest files updated for Minikube compatibility.
+---
 
 ## 🚀 Getting Started
 1. **Prerequisites**: Ensure you have Docker, Kubernetes, and AWS CLI installed.
