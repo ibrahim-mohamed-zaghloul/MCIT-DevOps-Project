@@ -1,25 +1,18 @@
-#provider
-
-region = "us-east-1"
-
-#ecr
-
-ecr_frontend_name = "frontend_repo"
-ecr_backend_name = "backend_repo"
-
 #network
 
-vpc_cidr = "10.0.0.0/16"
-vpc_name = "three_tier_vpc"
-igw_name = "three_tier_internet_gateway"
-public_subnet_name = "three_tier_public_subnet"
-public_subnet_cidr = "10.0.1.0/24"
-public_route_table_name = "three_tier_public_route_table"
-sg_name = "three_tier_security_group"
+vpc_cidr_block            = "10.0.0.0/16"
+public_subnet_cidr_blocks = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
 
-#iam_roles_nodes
+availability_zones = ["eu-north-1a", "eu-north-1b"]
 
-iam_role_nodes_name = "iam_role_nodes_name_eks_cluster_three_tier_app"
-eks_node_group_name = "node-group-three-tier-app"
-iam_role_eks_cluster_name = "iam_role_eks_cluster_three_tier_app"
-eks_cluster_name = "eks_cluster_three_tier_app"
+#EC2-ECR
+
+region     = "eu-north-1"
+key_name   = "ubuntu_jenkins.pem"
+ami        = "ami-08eb150f611ca277f" 
+account_id = "376129884375"
+
+#EKS
+
+cluster_name = "eks_cluster"

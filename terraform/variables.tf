@@ -1,70 +1,46 @@
-#provider
+# network variables
 
 variable "region" {
-  description = "the name of the region"
+  description = "The AWS region to create resources in."
 }
 
-#ecr
-
-variable "ecr_frontend_name" {
-  description = "the name of the frontend repo"
+variable "vpc_cidr_block" {
+  description = "The CIDR block for the VPC."
 }
 
-variable "ecr_backend_name" {
-  description = "the name of the backend repo"
+variable "public_subnet_cidr_blocks" {
+  description = "A list of CIDR blocks for the public subnets."
+  type        = list(string)
 }
 
-#network
-
-variable "vpc_cidr" {
-  description = "the vpc cidr block range"
+variable "private_subnet_cidr_blocks" {
+  description = "A list of CIDR blocks for the private subnets."
+  type        = list(string)
 }
 
-variable "vpc_name" {
-  description = "the name of the vpc"
+variable "availability_zones" {
+  description = "A list of availability zones"
 }
 
-variable "igw_name" {
-  description = "the name of the vpc"
+variable "account_id" {
+  description = "An AWS Account ID."
 }
 
-variable "public_subnet_name" {
-  description = "the name of the public subnet"
-}
+# ec2 variables
 
-variable "public_subnet_cidr" {
-  description = "the public subnet cidr block range"
-}
-
-variable "public_route_table_name" {
-  description = "the name of the public route table"
-}
-
-variable "sg_name" {
-  description = "the name of the security group"
-}
-
-#iam_roles_nodes
-
-variable "iam_role_nodes_name" {
-  description = "the name of the iam role of the nodes of the eks cluster"
-}
-
-#Node_Group
-
-variable "iam_role_nodes_name" {
-  description = "the name of the iam role of of the nodes of the eks cluster"
+variable "key_name" {
+  description = "The name of the SSH key pair."
 }
 
 
-variable "eks_node_group_name" {
-  description = "the name of the node group"
+variable "ami" {
+  description = "The name of the SSH key pair."
 }
 
-variable "iam_role_eks_cluster_name" {
-  description = "the name of the iam role of the eks cluster"
+
+# EKS Variables
+
+variable "cluster_name" {
+  description = "The name of the EKS cluster."
 }
 
-variable "eks_cluster_name" {
-  description = "the name of the eks cluster"
-}
