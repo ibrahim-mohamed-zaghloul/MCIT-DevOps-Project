@@ -5,7 +5,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 
   vpc_config {
 
-    subnet_ids = [aws_subnet.private_subnet.0.id, aws_subnet.private_subnet.1.id]
+    subnet_ids = [aws_subnet.public_subnet.0.id, aws_subnet.public_subnet.1.id]
   }
   depends_on = [aws_iam_role_policy_attachment.AmazonEKSClusterPolicy]
 }
@@ -76,7 +76,7 @@ resource "aws_eks_node_group" "private-nodes" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "private-nodes"
   node_role_arn   = aws_iam_role.nodes.arn
-  subnet_ids = [aws_subnet.private_subnet.0.id, aws_subnet.private_subnet.1.id]
+  subnet_ids = [aws_subnet.public_subnet.0.id, aws_subnet.public_subnet.1.id]
   capacity_type  = "ON_DEMAND"
   scaling_config {
     desired_size = 1
