@@ -1,16 +1,16 @@
 #network
 
-vpc_cidr_block            = "10.0.0.0/16"
-public_subnet_cidr_blocks = ["10.0.1.0/24", "10.0.2.0/24"]
+vpc_cidr_block             = "10.0.0.0/16"
+public_subnet_cidr_blocks  = ["10.0.1.0/24", "10.0.2.0/24"]
 private_subnet_cidr_blocks = ["10.0.3.0/24", "10.0.4.0/24"]
 
-availability_zones = ["eu-north-1a", "eu-north-1b"]
+availability_zones = ["us-east-1a", "us-east-1b"]
 
 #EC2-ECR
 
-region     = "eu-north-1"
-key_name   = "ubuntu_jenkins.pem"
-ami        = "ami-08eb150f611ca277f" 
+region     = "us-east-1"
+key_name   = "us-east-1-aws-key"
+ami        = "ami-0866a3c8686eaeeba"
 account_id = "376129884375"
 
 #EKS

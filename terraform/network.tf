@@ -66,25 +66,24 @@ resource "aws_nat_gateway" "nat_gw" {
   depends_on = [aws_internet_gateway.igw]
 }
 
-# subnet
+# private subnet
 
 resource "aws_subnet" "private_subnet" {
-  count                   = length(var.private_subnet_cidr_blocks)
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = var.private_subnet_cidr_blocks[count.index]
-  availability_zone       = var.availability_zones[count.index]
+  count             = length(var.private_subnet_cidr_blocks)
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = var.private_subnet_cidr_blocks[count.index]
+  availability_zone = var.availability_zones[count.index]
 
   tags = {
     Name = "private-subnet-${count.index}"
   }
 }
-
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.nat_gw.id          
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gw.id
   }
 
   tags = {
@@ -98,53 +97,26 @@ resource "aws_route_table_association" "assoc_private_route_table" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
-resource "aws_security_group" "eks_node_group_sg" {
-  vpc_id = aws_vpc.vpc.id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"  
-    cidr_blocks  = ["10.0.1.0/24", "10.0.3.0/24", "10.0.4.0/24"]
-  }
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"  
-    cidr_blocks  = ["10.0.3.0/24", "10.0.4.0/24"]
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"  # All protocols
-    cidr_blocks  = ["10.0.1.0/24"]
-  }
-
-  tags = {
-    Name = "eks_node_group_sg"
-  }
-}
-
 resource "aws_security_group" "bastion_host_sg" {
   vpc_id = aws_vpc.vpc.id
 
   ingress {
     from_port   = 22
     to_port     = 22
-    protocol    = "tcp"  
-    cidr_blocks  = ["0.0.0.0/0"]
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     from_port   = 8080
     to_port     = 8080
-    protocol    = "tcp"  
-    cidr_blocks  = ["0.0.0.0/0"]
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"  # All protocols
-    cidr_blocks  = ["0.0.0.0/0"]
+    protocol    = "-1" # All protocols
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {

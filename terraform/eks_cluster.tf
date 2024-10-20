@@ -10,6 +10,7 @@ resource "aws_eks_cluster" "eks_cluster" {
   depends_on = [aws_iam_role_policy_attachment.AmazonEKSClusterPolicy]
 }
 
+#cluster_role
 resource "aws_iam_role" "eks_cluster" {
   name = "eks-cluster-role"
 
@@ -25,11 +26,13 @@ resource "aws_iam_role" "eks_cluster" {
   })
 }
 
+#cluster_role_policy_attachment
 resource "aws_iam_role_policy_attachment" "AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.eks_cluster.name
 }
 
+#workernodes_role
 resource "aws_iam_role" "nodes" {
   name = "eks-node-group-nodes"
 
@@ -44,6 +47,8 @@ resource "aws_iam_role" "nodes" {
     }]
   })
 }
+
+#workernodes_role_policy_attachment
 
 resource "aws_iam_role_policy_attachment" "nodes-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
@@ -71,16 +76,16 @@ resource "aws_eks_node_group" "private-nodes" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "private-nodes"
   node_role_arn   = aws_iam_role.nodes.arn
-
   subnet_ids = [aws_subnet.private_subnet.0.id, aws_subnet.private_subnet.1.id]
-
   capacity_type  = "ON_DEMAND"
-  instance_types = ["t3.medium"]
-
   scaling_config {
-    desired_size = 2
-    max_size     = 2
-    min_size     = 2
+    desired_size = 1
+    max_size     = 1
+    min_size     = 1
+  }
+  
+  remote_access {
+    ec2_ssh_key = var.key_name
   }
 
   update_config {
@@ -88,7 +93,7 @@ resource "aws_eks_node_group" "private-nodes" {
   }
 
   tags_all = {
-    "ENV"  = "fp"
+    "ENV" = "fp"
   }
 
   depends_on = [
@@ -96,6 +101,7 @@ resource "aws_eks_node_group" "private-nodes" {
     aws_iam_role_policy_attachment.nodes-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.nodes-AmazonEC2ContainerRegistryReadOnly,
   ]
+
 }
 
 
