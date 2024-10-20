@@ -4,11 +4,10 @@ metadata:
   name: svc-frontend
   namespace: test
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30000  # You can set any port between 30000-32767, or omit to let Kubernetes choose
   selector:
     app: client
 
