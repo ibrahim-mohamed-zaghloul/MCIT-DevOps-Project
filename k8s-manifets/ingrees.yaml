@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing  # Make ALB internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    alb.ingress.kubernetes.io/security-groups: "sg-0fca1bc090b4a8d88"  # Reference the SG created in Terraform
+spec:
+  rules:
+    # Uncomment and set host if needed
+    # - host: <domain-name>
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-frontend
+                port:
+                  number: 80  # Matches the frontend service port defined in Terraform
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-backend
+                port:
+                  number: 8080  # Matches the backend service port defined in Terraform

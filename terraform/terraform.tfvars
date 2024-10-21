@@ -9,7 +9,7 @@ availability_zones = ["us-east-1a", "us-east-1b"]
 #EC2-ECR
 
 region     = "us-east-1"
-key_name   = "us-east-1-aws-key"
+key_name   = "eks-test"
 ami        = "ami-0866a3c8686eaeeba"
 account_id = "376129884375"
 

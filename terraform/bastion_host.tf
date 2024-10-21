@@ -4,9 +4,9 @@
 resource "aws_instance" "public_ec2" {
 
   ami                  = var.ami
-  instance_type        = "t3.medium"
+  instance_type        = "t3.large"
   subnet_id            = aws_subnet.public_subnet.0.id
-  key_name             = "us-east-1-aws-key"
+  key_name             = "eks-test"
   # iam_instance_profile = aws_iam_instance_profile.public_ec2_profile.name
   vpc_security_group_ids = [
     aws_security_group.bastion_host_sg.id
@@ -17,19 +17,20 @@ resource "aws_instance" "public_ec2" {
     Name = "public-ec2"
   }
   provisioner "file" {
-    source      = "~/Desktop/new_repo/us-east-1-aws-key.pem" # Local path to the file
-    destination = "/home/ubuntu/.ssh/us-east-1-aws-key.pem"  # Destination path on the EC2 instance
+    source      = "~/Desktop/new_repo/eks-test.pem" # Local path to the file
+    destination = "/home/ubuntu/.ssh/eks-test.pem"  # Destination path on the EC2 instance
   }
 
   provisioner "remote-exec" {
     inline = [
-      "chmod 400 /home/ubuntu/.ssh/us-east-1-aws-key.pem"
+    "mkdir -p /home/ubuntu/.ssh",
+    "chmod 400 /home/ubuntu/.ssh/eks-test.pem"  
     ]
   }
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("~/Desktop/new_repo/us-east-1-aws-key.pem") # This is the private key used for SSH access
+    private_key = file("~/Desktop/new_repo/eks-test.pem") # This is the private key used for SSH access
     host        = aws_instance.public_ec2.public_ip
   }
 }

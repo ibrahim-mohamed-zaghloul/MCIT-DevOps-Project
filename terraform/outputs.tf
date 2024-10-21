@@ -7,6 +7,7 @@ output "public-IPv4" {
 }
 
 
+
 #ECR
 
 output "ecr_front_endpoint" {
@@ -15,4 +16,9 @@ output "ecr_front_endpoint" {
 
 output "ecr_back_endpoint" {
   value = aws_ecr_repository.ecr_repo_back.repository_url
+}
+
+output "alb_security_group_id" {
+  description = "The security group ID for the ALB"
+  value       = aws_security_group.alb_sg.id
 }

@@ -6,7 +6,8 @@ metadata:
 data:
   # API Environment Variables
   ConnectionStrings__DefaultConnection: "Server=svc-sqlserver;Database=AppDb;User Id=sa;Password=MasterKey0;TrustServerCertificate=True;"
-  AllowedOrigins: "http://192.168.49.2:30000"
+  
+  AllowedOrigins: "http://svc-frontend:80"
 
   # Client Environment Variables
-  API_URL: "http://192.168.49.2:30001/api"
+  API_URL: "http://svc-backend:8080/api"

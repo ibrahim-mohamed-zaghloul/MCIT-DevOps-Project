@@ -2,6 +2,9 @@
 - name: Install Node.js, Angular CLI, Chrome, Jenkins, Docker, AWS CLI, and Kubectl
   hosts: all
   become: yes
+  vars:
+    cluster_name: eks_cluster
+    aws_region: us-east-1
   tasks:
     - name: Install dependencies
       apt:
@@ -43,13 +46,13 @@
 
     - name: Download Jenkins GPG key
       apt_key:
-            url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+            url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
             state: present
 
-    - name: Add Jenkins repository
-      apt_repository:
-        repo: deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] http://pkg.jenkins.io/debian-stable binary/
-        state: present
+    - name: add jenkins repo 
+      apt_repository: #ansible module to add repo 
+        repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+        state: present 
 
     - name: Update apt cache
       apt:
@@ -96,20 +99,40 @@
             state: present
             validate: 'visudo -cf %s'  # Validate the file after modification
 
+    - name: Restart Jenkins service
+      service:
+        name: jenkins
+        state: restarted
+
     - name: Check if AWS CLI is installed
       command: aws --version
       register: aws_cli_check
       ignore_errors: yes
+
+    - name: Download AWS CLI installer
+      get_url:
+        url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+        dest: "/tmp/awscliv2.zip"
+      when: aws_cli_check.rc != 0
 
     - name: Install AWS CLI
       unarchive:
         src: "/tmp/awscliv2.zip"
         dest: "/tmp"
         remote_src: yes
-      when: aws_cli_check.rc != 0  # Install only if it's not installed
+      when: aws_cli_check.rc != 0
 
     - name: Run AWS CLI installer
       command: "/tmp/aws/install"
+      when: aws_cli_check.rc != 0
+
+    - name: Clean up AWS CLI installer
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/awscliv2.zip"
+        - "/tmp/aws"
       when: aws_cli_check.rc != 0
 
     - name: Get latest kubectl version
@@ -122,10 +145,32 @@
         dest: /usr/local/bin/kubectl
         mode: '0755'
 
-    - name: Restart Jenkins service
-      service:
-        name: jenkins
-        state: restarted
+
+    - name: Install Helm
+      shell: |
+        curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+        sudo apt-get update
+        sudo apt-get install helm
+
+    # - name: Add EKS Helm repository
+    #   command: helm repo add eks https://aws.github.io/eks-charts
+
+    # - name: Update Helm repositories
+    #   command: helm repo update
+
+    # - name: Update kubeconfig for EKS cluster
+    #   command: aws eks update-kubeconfig --region us-east-1 --name eks_cluster        
+      
+    # - name: Install AWS Load Balancer Controller
+    #   command: >
+    #     helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+    #     -n kube-system \
+    #     --set clusterName=eks_cluster \
+    #     --set serviceAccount.create=false \
+    #     --set serviceAccount.name=aws-load-balancer-controller
+    #   args:
+    #     chdir: /usr/local/bin/helm # Ensure the correct path to Helm if necessary 
 
     - name: Read Jenkins initial admin password
       command: cat /var/lib/jenkins/secrets/initialAdminPassword
