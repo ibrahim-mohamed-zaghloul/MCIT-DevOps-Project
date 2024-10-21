@@ -11,9 +11,7 @@ metadata:
     alb.ingress.kubernetes.io/security-groups: "sg-0fca1bc090b4a8d88"  # Reference the SG created in Terraform
 spec:
   rules:
-    # Uncomment and set host if needed
-    # - host: <domain-name>
-      http:
+    - http:  # Ensure this is part of a list
         paths:
           - path: /
             pathType: Prefix
