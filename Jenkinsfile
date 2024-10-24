@@ -68,7 +68,7 @@ pipeline {
         }
         stage('Push Server-Side Docker Image') {
             steps {
-                sh 'docker login -u michaelhaleem -p Michael136*' // Login to Docker Hub
+            
                 sh 'docker tag serverside michaelhaleem/serverside:latest'
                 sh 'docker push michaelhaleem/serverside:latest'
             }
