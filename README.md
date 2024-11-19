@@ -124,7 +124,7 @@ Using **Terraform**, this project provisions the necessary AWS infrastructure:
 - 🌐 **VPC**
 - 🖧 **Subnets**
 - 💻 **EC2 Instances**
-- 🗄️ **RDS (MySQL) Database**
+- 🗄️ **EKS Cluster**
 
 Ensure you have Terraform installed and configured to interact with AWS.
 
